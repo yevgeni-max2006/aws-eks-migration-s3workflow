@@ -1,5 +1,4 @@
 
-
 resource "kubernetes_namespace" "migration" {
   metadata {
     name = "migration"
