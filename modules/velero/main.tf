@@ -4,39 +4,35 @@ resource "helm_release" "velero" {
   namespace        = "velero"
   repository       = "https://vmware-tanzu.github.io/helm-charts"
   chart            = "velero"
-  version          = "6.7.0" # check latest
+  version          = "6.7.0"
   create_namespace = true
 
   set {
     name  = "upgradeCRDs"
     value = "false"
   }
- 
+
   values = [<<EOF
 configuration:
-  
   backupStorageLocation:
     - name: default
       provider: aws
-      bucket: velero
+      bucket: payplus-velero
       config:
-        region: us-west-rack2
-        s3ForcePathStyle: "true"
-        s3Url: "http://minio.default.svc.cluster.local:9000"
+        region: eu-west-1
+        s3ForcePathStyle: "false"
 
   volumeSnapshotLocation:
     - name: default
       provider: aws
       config:
-        region: us-west-rack2
+        region: eu-west-1
+
 
 credentials:
   useSecret: true
-  secretContents:
-    cloud: |
-      [default]
-      aws_access_key_id = root
-      aws_secret_access_key = q1w2e3r4100@
+  existingSecret: cloud-credentials
+
 
 initContainers:
   - name: velero-plugin-for-aws
@@ -45,10 +41,10 @@ initContainers:
       - mountPath: /target
         name: plugins
 
+deployNodeAgent: true
+
 metrics:
   enabled: true
-
-deployNodeAgent: true
 EOF
   ]
 }
