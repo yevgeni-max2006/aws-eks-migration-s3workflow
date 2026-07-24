@@ -1,5 +1,7 @@
 
+
 ###  ---  Default Application  ---  ###
+
 module "httpd" {
   source = "./modules/httpd"
   depends_on = [kubernetes_namespace.migration]
@@ -12,14 +14,11 @@ module "httpd" {
   service_type = "ClusterIP"
 }
 
-module "minio" {
-  source = "./modules/minio"
-  depends_on = [module.httpd]
-}
-
 module "velero" {
   source = "./modules/velero"
-  depends_on = [module.minio]
+  depends_on = [module.httpd]
+  aws_access_key_id     = var.aws_access_key_id
+  aws_secret_access_key = var.aws_secret_access_key
 }
 
 module "velero-ui" {
