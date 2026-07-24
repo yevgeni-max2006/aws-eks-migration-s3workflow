@@ -1,7 +1,5 @@
 
-
 ###  ---  Default Application  ---  ###
-
 module "httpd" {
   source = "./modules/httpd"
   depends_on = [kubernetes_namespace.migration]
